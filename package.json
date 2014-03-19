@@ -1,0 +1,22 @@
+{
+  "name": "kommand",
+  "version": "1.0.0",  
+  "description": "SMS libraries for sending sms through Bangladeshi GSM Operators",
+  "author": {
+    "name": "kaalpurush"
+  },
+  "repository": {
+	"type": "git",
+    "url": "https://github.com/kaalpurush/node-sms"
+  },
+  "private": true,
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "3.5.0",
+    "ejs": "*",
+	"request": "*",
+	mongodb: "*"
+  }
+}
