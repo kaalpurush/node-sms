@@ -9,7 +9,6 @@
 	"type": "git",
     "url": "https://github.com/kaalpurush/node-sms"
   },
-  "private": true,
   "scripts": {
     "start": "node app.js"
   },
@@ -17,6 +16,6 @@
     "express": "3.5.0",
     "ejs": "*",
 	"request": "*",
-	mongodb: "*"
+	"mongodb": "*"
   }
 }
