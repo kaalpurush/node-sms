@@ -1,4 +1,4 @@
-kommand
+node-sms
 =======
 
 [![NPM](https://nodei.co/npm/node-sms.png)](https://nodei.co/npm/node-sms/)
