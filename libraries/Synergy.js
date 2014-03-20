@@ -4,7 +4,7 @@ var Synergy=function(api_key,api_secret){
 	this.end_point='http://bulksms.synergyinterface.com/sms_db/bulk_send_api.php';
 	this.api_key=api_key;
 	this.api_secret=api_secret;
-	this.send=function (to, message, callback){
+	this.send=function (from, to, message, callback){
 		request.post({
 			headers:	{'content-type' : 'multipart/form-data'},
 			url:		this.end_point,

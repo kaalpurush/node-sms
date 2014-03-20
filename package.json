@@ -1,6 +1,6 @@
 {
   "name": "node-sms",
-  "version": "1.0.0",  
+  "version": "1.0.1",  
   "description": "SMS libraries for sending sms through Bangladeshi GSM Operators",
   "author": {
     "name": "kaalpurush"
