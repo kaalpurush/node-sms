@@ -11,6 +11,8 @@ var path = require('path');
 
 var app = express();
 
+var cors = require('cors');
+
 // all environments
 app.set('port', process.env.PORT || 8080);
 app.set('views', path.join(__dirname, 'views'));
@@ -22,6 +24,8 @@ app.use(express.urlencoded());
 app.use(express.methodOverride());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(cors());
 
 // development only
 if ('development' == app.get('env')) {

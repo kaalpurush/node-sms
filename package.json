@@ -16,6 +16,7 @@
     "express": "3.5.0",
     "ejs": "*",
 	"request": "*",
-	"mongodb": "*"
+	"mongodb": "*",
+	"cors": "*"
   }
 }
