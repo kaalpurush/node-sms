@@ -2,6 +2,7 @@ var config = require('../config/');
 var MongoClient = require('mongodb').MongoClient;
 var Synergy = require('../libraries/Synergy');
 var Airtel = require('../libraries/Airtel');
+var SilverStreet = require('../libraries/SilverStreet');
 /*
  * GET home page.
  */
