@@ -1,20 +1,25 @@
 var request = require('request');
 
-var Synergy=function(api_key,api_secret){
-	this.end_point='http://bulksms.synergyinterface.com/sms_db/bulk_send_api.php';
+var SilverStreet=function(api_key,api_secret){
+	this.end_point='http://api.silverstreet.com/send.php';
 	this.api_key=api_key;
 	this.api_secret=api_secret;
 	this.send=function (message, callback){
+        var form={ username: this.api_key, password: this.api_secret, destination: message.to, body: message.body };
+
+        if(message.from!='')
+            form.sender=message.from;
+
+        if(message.reference!='')
+            form.reference=message.reference;
+
 		request.post({
 			headers:	{'content-type' : 'multipart/form-data'},
 			url:		this.end_point,
-			form:		{ key: this.api_key, countrycode: 'BD', numbers: message.to, message: message.body }
+			form:		form
 		}, function(error, response, body){
 			//console.log(response);
-            try{
-                var ret=JSON.parse(body);
-            }catch(e){}
-            if(typeof ret!='undefined' && ret.return=='true')
+            if(body=='01')
                 callback(1);
             else
                 callback(0);

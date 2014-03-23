@@ -42,7 +42,7 @@ function send(messages, callback) {
 
         message.from = message.from || '';
 
-        synergy.send(message.from, message.to, message.msg, function (status) {
+        synergy.send(message, function (status) {
             processed++;
             if (status == 0)
                 failed++;
