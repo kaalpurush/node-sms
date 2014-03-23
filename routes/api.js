@@ -88,8 +88,9 @@ exports.send = function (req, res) {
             send(req.body.messages, function (report) {
                 var date = new Date;
                 addReport(api_key, date.getDate(), date.getMonth() + 1, date.getFullYear(), report);
-                res.json(report);
+                //res.json(report);
             });
+            res.json({total:req.body.messages.length});
         },
         function () {
             res.json({error: 'Auth Error!'});
