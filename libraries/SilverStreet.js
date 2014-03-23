@@ -28,4 +28,4 @@ var SilverStreet=function(api_key,api_secret){
 	}
 }
 
-module.exports = Synergy;
+module.exports = SilverStreet;
