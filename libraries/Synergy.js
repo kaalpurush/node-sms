@@ -10,7 +10,6 @@ var Synergy=function(api_key,api_secret){
 			url:		this.end_point,
 			form:		{ key: this.api_key, countrycode: 'BD', numbers: message.to, message: message.body }
 		}, function(error, response, body){
-			//console.log(response);
             try{
                 var ret=JSON.parse(body);
             }catch(e){}

@@ -50,7 +50,7 @@ function send(req, callback) {
         var message = messages[i];
         var processed = 0, success = 0, failed = 0;
 
-        message.from = message.from || '';
+        message.from = message.from || config.default_sms_sender;
 
         sms_gateway.send(message, function (status) {
             processed++;
