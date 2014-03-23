@@ -34,15 +34,24 @@ function authenticate(cred, success, fail) {
     });
 }
 
-function send(messages, callback) {
-    var synergy = new Synergy(config.synergy.api_key, config.synergy.api_secret);
+function send(req, callback) {
+    var sms_gateway=req.params.sms_gateway||config.default_sms_gateway;
+    var messages=req.body.messages;
+
+    if(sms_gateway=='synergy')
+        sms_gateway = new Synergy(config.synergy.api_key, config.synergy.api_secret);
+    else if(sms_gateway=='airtel')
+        sms_gateway = new Airtel(config.airtel.api_key, config.airtel.api_secret);
+    else if(sms_gateway=='silverstreet')
+        sms_gateway = new SilverStreet(config.silverstreet.api_key, config.silverstreet.api_secret);
+
     for (i in messages) {
         var message = messages[i];
         var processed = 0, success = 0, failed = 0;
 
         message.from = message.from || '';
 
-        synergy.send(message, function (status) {
+        sms_gateway.send(message, function (status) {
             processed++;
             if (status == 0)
                 failed++;
@@ -83,9 +92,10 @@ function addReport(api_key, day, month, year, report, callback) {
 exports.send = function (req, res) {
     var api_key = req.body.api_key;
     var api_secret = req.body.api_secret;
+
     authenticate({api_key: api_key, api_secret: api_secret},
         function () {
-            send(req.body.messages, function (report) {
+            send(req, function (report) {
                 var date = new Date;
                 addReport(api_key, date.getDate(), date.getMonth() + 1, date.getFullYear(), report);
                 //res.json(report);

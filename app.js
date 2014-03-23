@@ -53,7 +53,7 @@ app.use(allowCrossDomain);
 
 app.get('/', routes.index);
 app.get('/api', api.index);
-app.post('/api/send', api.send);
+app.post('/api/send/:sms_gateway?', api.send);
 app.post('/api/report', api.report);
 app.get('/api/create', api.create);
 
