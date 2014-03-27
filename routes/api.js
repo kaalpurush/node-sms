@@ -90,8 +90,8 @@ function showReport(api_key, day, month, year, callback) {
 function addReport(api_key, day, month, year, report, callback) {
 	db.collection('reports').update({api_key: api_key, day: day, month: month, year: year}, {$inc: report}, {upsert: true}, function (err, objects) {
 		if (err) throw err;
-	}); 
-	callback();
+		callback();
+	}); 	
 }
 
 exports.send = function (req, res) {
@@ -103,6 +103,7 @@ exports.send = function (req, res) {
 			authenticate({api_key: api_key, api_secret: api_secret},
 				function () {
 					send(req, function (report) {
+						console.log(report);
 						var date = new Date;
 						addReport(api_key, date.getDate(), date.getMonth() + 1, date.getFullYear(), report, function(){
 							db.close();
