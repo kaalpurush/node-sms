@@ -5,7 +5,7 @@ var SilverStreet=function(api_key,api_secret){
 	this.api_key=api_key;
 	this.api_secret=api_secret;
 	this.send=function (message, callback){
-        var form={ username: this.api_key, password: this.api_secret, bodytype:4, sender: message.from, destination: message.to, body: message.body };
+        var form={ username: this.api_key, password: this.api_secret, sender: message.from, destination: message.to, body: message.body };
 
         if(typeof message.reference!='undefined' && message.reference!='')
             form.reference=message.reference;
@@ -15,11 +15,11 @@ var SilverStreet=function(api_key,api_secret){
 			url:		this.end_point,
 			form:		form
 		}, function(error, response, body){
+			console.log(body);
             if(body=='01')
                 callback(1);
             else
-                callback(0);
-			console.log(body);
+                callback(0);			
 		});
 	}
 }
