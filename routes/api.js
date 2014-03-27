@@ -35,6 +35,7 @@ function dbconnect(callback){
 function authenticate(cred, success, fail) {
 	var collection = db.collection('clients');
 	collection.findOne({api_key: cred.api_key, api_secret: cred.api_secret}, function (err, item) {
+		if (err) throw err;
 		if (item)
 			success();
 		else
@@ -79,61 +80,67 @@ function showReport(api_key, day, month, year, callback) {
 	if (month)
 		conditions.month = month;
 	conditions.year = year;
-	console.log(conditions);
+	//console.log(conditions);
 	collection.find(conditions).sort({year: -1, month: -1, day: -1}).toArray(function (err, results) {
+		if (err) throw err;
 		callback(results);
 	});
 }
 
-function addReport(api_key, day, month, year, report, callback) {	
+function addReport(api_key, day, month, year, report, callback) {
 	db.collection('reports').update({api_key: api_key, day: day, month: month, year: year}, {$inc: report}, {upsert: true}, function (err, objects) {
 		if (err) throw err;
-	});    
+	}); 
+	callback();
 }
 
 exports.send = function (req, res) {
     var api_key = req.body.api_key;
     var api_secret = req.body.api_secret;
 
-	dbconnect(function(){
-		authenticate({api_key: api_key, api_secret: api_secret},
-			function () {
-				send(req, function (report) {
-					var date = new Date;
-					addReport(api_key, date.getDate(), date.getMonth() + 1, date.getFullYear(), report);
-					//res.json(report);
-				});
-				res.json({total:req.body.messages.length});
-				db.close();
-			},
-			function () {
-				res.json({error: 'Auth Error!'});
-				db.close();
-			}
-		);
-	});
+	try{
+		dbconnect(function(){
+			authenticate({api_key: api_key, api_secret: api_secret},
+				function () {
+					send(req, function (report) {
+						var date = new Date;
+						addReport(api_key, date.getDate(), date.getMonth() + 1, date.getFullYear(), report, function(){
+							db.close();
+						});
+						//res.json(report);
+					});
+					res.json({total:req.body.messages.length});				
+				},
+				function () {
+					res.json({error: 'Auth Error!'});
+					db.close();
+				}
+			);
+		});
+	}catch(e){db.close();}
 }
 
 exports.report = function (req, res) {
-    console.log(req.body);
+    //console.log(req.body);
     var api_key = req.body.api_key;
     var api_secret = req.body.api_secret;
     var day = req.body.day;
     var month = req.body.month;
     var year = req.body.year;
-	dbconnect(function(){
-		authenticate({api_key: api_key, api_secret: api_secret},
-			function () {
-				showReport(api_key, day, month, year, function (report) {
-					res.json(report);
+	try{
+		dbconnect(function(){
+			authenticate({api_key: api_key, api_secret: api_secret},
+				function () {
+					showReport(api_key, day, month, year, function (report) {
+						res.json(report);
+						db.close();
+					});
+				},
+				function () {
+					res.json({error: 'Auth Error!'});
 					db.close();
-				});
-			},
-			function () {
-				res.json({error: 'Auth Error!'});
-				db.close();
-			}
-		);
-	});
-
+				}
+			);
+		});
+	}catch(e){db.close();}
 }
