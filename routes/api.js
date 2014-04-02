@@ -11,7 +11,7 @@ exports.index = function (req, res) {
 exports.send = function (req, res) {
     var api_key = req.body.api_key;
     var api_secret = req.body.api_secret;
-	var api_origin = req.get('origin').replace('www.','');
+	var api_origin = req.get('origin');
 	
 	var gateway=req.params.sms_gateway||config.default_sms_gateway;
 	
@@ -44,23 +44,29 @@ exports.report = function (req, res) {
     //console.log(req.body);
     var api_key = req.body.api_key;
     var api_secret = req.body.api_secret;
+	var api_origin = req.get('origin');
+	
     var day = req.body.day;
     var month = req.body.month;
     var year = req.body.year;
-	try{
-		Sms.connectDB(function(){
-			Sms.authenticate({api_key: api_key, api_secret: api_secret},
+	
+	var gateway=req.params.sms_gateway||config.default_sms_gateway;	
+	var sms=new Sms(gateway, config.mongo.connection);
+	
+	//try{
+		sms.connectDB(function(){
+			sms.authenticate({api_key: api_key, api_secret: api_secret, api_origin: api_origin},
 				function () {
-					Sms.showReport(api_key, day, month, year, function (report) {
+					sms.showReport(api_key, day, month, year, function (report) {
 						res.json(report);
-						Sms.closeDB();
+						sms.closeDB();
 					});
 				},
 				function () {
 					res.json({error: 'Auth Error!'});
-					Sms.closeDB();
+					sms.closeDB();
 				}
 			);
 		});
-	}catch(e){Sms.closeDB();}
+	//}catch(e){Sms.closeDB();}
 }

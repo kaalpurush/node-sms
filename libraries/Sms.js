@@ -1,7 +1,7 @@
 var MongoClient = require('mongodb').MongoClient;
-var Synergy = require('Synergy');
-var Airtel = require('Airtel');
-var SilverStreet = require('SilverStreet');
+var Synergy = require('./Synergy');
+var Airtel = require('./Airtel');
+var SilverStreet = require('./SilverStreet');
 
 var Sms=function(gateway,connection){
 	var self=this;
@@ -27,6 +27,8 @@ var Sms=function(gateway,connection){
 
 	this.authenticate=function(cred, success, fail) {
 		var collection = self.db.collection('clients');
+		cred.api_origin=cred.api_origin.replace('http://','').replace('https://','').replace('www.','');
+		
 		collection.findOne({api_key: cred.api_key, api_secret: cred.api_secret, api_origin: cred.api_origin}, function (err, item) {
 			if (err) throw err;
 			if (item)
@@ -88,4 +90,4 @@ var Sms=function(gateway,connection){
 
 }
 
-module.export=Sms;
+module.exports = Sms;
