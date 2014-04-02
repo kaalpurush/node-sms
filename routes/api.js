@@ -15,17 +15,17 @@ exports.send = function (req, res) {
 	
 	var gateway=req.params.sms_gateway||config.default_sms_gateway;
 	
-	var Sms=new Sms(gateway, config.mongo.connection);
+	var sms=new Sms(gateway, config.mongo.connection);
 
 	try{
-		Sms.connectDB(function(){
-			Sms.authenticate({api_key: api_key, api_secret: api_secret, api_origin: api_origin},
+		sms.connectDB(function(){
+			sms.authenticate({api_key: api_key, api_secret: api_secret, api_origin: api_origin},
 				function () {
-					Sms.send(req, function (report) {
+					sms.send(req, function (report) {
 						console.log(report);
 						var date = new Date;
-						Sms.addReport(api_key, date.getDate(), date.getMonth() + 1, date.getFullYear(), report, function(){
-							Sms.closeDB();
+						sms.addReport(api_key, date.getDate(), date.getMonth() + 1, date.getFullYear(), report, function(){
+							sms.closeDB();
 						});
 						//res.json(report);
 					});
@@ -33,11 +33,11 @@ exports.send = function (req, res) {
 				},
 				function () {
 					res.json({error: 'Auth Error!'});
-					Sms.closeDB();
+					sms.closeDB();
 				}
 			);
 		});
-	}catch(e){Sms.closeDB();}
+	}catch(e){sms.closeDB();}
 }
 
 exports.report = function (req, res) {
