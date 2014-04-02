@@ -1,4 +1,3 @@
-var config = require('../config/');
 var Sms = require('../libraries/Sms');
 
 /*
@@ -13,9 +12,9 @@ exports.send = function (req, res) {
     var api_secret = req.body.api_secret;
 	var api_origin = req.get('origin');
 	
-	var gateway=req.params.sms_gateway||config.default_sms_gateway;
+	var gateway=req.params.sms_gateway;
 	
-	var sms=new Sms(gateway, config.mongo.connection);
+	var sms=new Sms(gateway);
 
 	try{
 		sms.connectDB(function(){
@@ -50,8 +49,8 @@ exports.report = function (req, res) {
     var month = req.body.month;
     var year = req.body.year;
 	
-	var gateway=req.params.sms_gateway||config.default_sms_gateway;	
-	var sms=new Sms(gateway, config.mongo.connection);
+	var gateway=req.params.sms_gateway;	
+	var sms=new Sms(gateway);
 	
 	//try{
 		sms.connectDB(function(){

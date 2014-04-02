@@ -2,16 +2,19 @@ var MongoClient = require('mongodb').MongoClient;
 var Synergy = require('./Synergy');
 var Airtel = require('./Airtel');
 var SilverStreet = require('./SilverStreet');
+var config = require('../config/smsconfig');
 
-var Sms=function(gateway,connection){
+var Sms=function(gateway){
 	var self=this;
 	var connected=false;
+	
+	gateway=gateway||config.default_sms_gateway;
 	
 	this.connectDB=function(callback){
 		if(connected)
 			callback();
 		else
-			MongoClient.connect(connection, function (err, db) {
+			MongoClient.connect(config.mongo.connection, function (err, db) {
 				if (err) throw err;
 				self.db=db;
 				connected=true;
