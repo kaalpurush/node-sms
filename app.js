@@ -55,7 +55,6 @@ app.get('/', routes.index);
 app.get('/api', api.index);
 app.post('/api/send/:sms_gateway?', api.send);
 app.post('/api/report', api.report);
-app.get('/api/create', api.create);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('SMS Gateway listening on port ' + app.get('port'));
