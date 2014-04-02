@@ -71,7 +71,7 @@ var Sms=function(gateway,connection){
 		}); 	
 	}
 	
-	this.showReport(api_key, day, month, year, callback) {
+	this.showReport=function(api_key, day, month, year, callback) {
 		var collection = self.db.collection('reports');
 		var conditions = {};
 		if (day)
