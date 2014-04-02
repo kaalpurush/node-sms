@@ -11,6 +11,7 @@ exports.index = function (req, res) {
 exports.send = function (req, res) {
     var api_key = req.body.api_key;
     var api_secret = req.body.api_secret;
+	var api_origin = req.get('origin').replace('www.','');
 	
 	var gateway=req.params.sms_gateway||config.default_sms_gateway;
 	
@@ -18,7 +19,7 @@ exports.send = function (req, res) {
 
 	try{
 		Sms.connectDB(function(){
-			Sms.authenticate({api_key: api_key, api_secret: api_secret},
+			Sms.authenticate({api_key: api_key, api_secret: api_secret, api_origin: api_origin},
 				function () {
 					Sms.send(req, function (report) {
 						console.log(report);

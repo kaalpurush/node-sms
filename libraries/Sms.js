@@ -3,10 +3,8 @@ var Synergy = require('Synergy');
 var Airtel = require('Airtel');
 var SilverStreet = require('SilverStreet');
 
-
 var Sms=function(gateway,connection){
 	var self=this;
-	this.gateway=gateway;
 	var connected=false;
 	
 	this.connectDB=function(callback){
@@ -29,7 +27,7 @@ var Sms=function(gateway,connection){
 
 	this.authenticate=function(cred, success, fail) {
 		var collection = self.db.collection('clients');
-		collection.findOne({api_key: cred.api_key, api_secret: cred.api_secret}, function (err, item) {
+		collection.findOne({api_key: cred.api_key, api_secret: cred.api_secret, api_origin: cred.api_origin}, function (err, item) {
 			if (err) throw err;
 			if (item)
 				success();
@@ -41,7 +39,7 @@ var Sms=function(gateway,connection){
 	this.send=function(req, callback) {		
 		var messages=req.body.messages;
 
-		if(this.gateway=='synergy')
+		if(gateway=='synergy')
 			this.gateway = new Synergy(config.synergy.api_key, config.synergy.api_secret);
 		else if(gateway=='airtel')
 			this.gateway = new Airtel(config.airtel.api_key, config.airtel.api_secret);
@@ -54,7 +52,7 @@ var Sms=function(gateway,connection){
 
 			message.from = message.from || config.default_sms_sender;
 
-			sms_gateway.send(message, function (status) {
+			this.gateway.send(message, function (status) {
 				processed++;
 				if (status == 0)
 					failed++;
@@ -86,9 +84,7 @@ var Sms=function(gateway,connection){
 			if (err) throw err;
 			callback(results);
 		});
-	}	
-	
-	
+	}
 
 }
 
