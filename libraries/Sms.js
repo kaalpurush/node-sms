@@ -1,20 +1,19 @@
 var MongoClient = require('mongodb').MongoClient;
-var Synergy = require('./Synergy');
-var Airtel = require('./Airtel');
-var SilverStreet = require('./SilverStreet');
 var config = require('../config/smsconfig');
 
-var Sms=function(gateway){
+var Sms=function(sms_gateway){
 	var self=this;
 	var connected=false;
 	
-	gateway=gateway||config.default_sms_gateway;
+	sms_gateway=sms_gateway||config.default_sms_gateway;
+	
+	self.gateway=new require('./'+sms_gateway)(config[sms_gateway].api_key, config[sms_gateway].api_secret);
 	
 	this.connectDB=function(callback){
 		if(connected)
 			callback();
 		else
-			MongoClient.connect(config.mongo.connection, function (err, db) {
+			MongoClient.connect(config.Mongo.connection, function (err, db) {
 				if (err) throw err;
 				self.db=db;
 				connected=true;
@@ -44,12 +43,6 @@ var Sms=function(gateway){
 	this.send=function(req, callback) {		
 		var messages=req.body.messages;
 
-		if(gateway=='synergy')
-			this.gateway = new Synergy(config.synergy.api_key, config.synergy.api_secret);
-		else if(gateway=='airtel')
-			this.gateway = new Airtel(config.airtel.api_key, config.airtel.api_secret);
-		else if(gateway=='silverstreet')
-			this.gateway = new SilverStreet(config.silverstreet.api_key, config.silverstreet.api_secret);
 
 		for (i in messages) {
 			var message = messages[i];
@@ -57,7 +50,7 @@ var Sms=function(gateway){
 
 			message.from = message.from || config.default_sms_sender;
 
-			this.gateway.send(message, function (status) {
+			self.gateway.send(message, function (status) {
 				processed++;
 				if (status == 0)
 					failed++;
