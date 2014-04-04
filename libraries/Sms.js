@@ -7,7 +7,9 @@ var Sms=function(sms_gateway){
 	
 	sms_gateway=sms_gateway||config.default_sms_gateway;
 	
-	self.gateway=new require('./'+sms_gateway)(config[sms_gateway].api_key, config[sms_gateway].api_secret);
+	var Gateway=require('./'+sms_gateway);
+	
+	self.gateway=new Gateway(config[sms_gateway].api_key, config[sms_gateway].api_secret);
 	
 	this.connectDB=function(callback){
 		if(connected)
