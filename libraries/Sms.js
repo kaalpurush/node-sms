@@ -73,7 +73,7 @@ var Sms=function(sms_gateway){
 	
 	this.showReport=function(api_key, day, month, year, callback) {
 		var collection = self.db.collection('reports');
-		var conditions = {};
+		var conditions = {api_key:api_key};
 		if (day)
 			conditions.day = day;
 		if (month)
