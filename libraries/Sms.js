@@ -5,6 +5,8 @@ var Sms=function(sms_gateway){
 	var self=this;
 	var connected=false;
 	
+	self.gateways=[];
+	
 	self.sms_gateway=sms_gateway||config.default_sms_gateway;
 	
 	this.connectDB=function(callback){
