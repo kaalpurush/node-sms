@@ -5,11 +5,7 @@ var Sms=function(sms_gateway){
 	var self=this;
 	var connected=false;
 	
-	sms_gateway=sms_gateway||config.default_sms_gateway;
-	
-	var Gateway=require('./'+sms_gateway);
-	
-	self.gateway=new Gateway(config[sms_gateway].api_key, config[sms_gateway].api_secret);
+	self.sms_gateway=sms_gateway||config.default_sms_gateway;
 	
 	this.connectDB=function(callback){
 		if(connected)
@@ -45,12 +41,13 @@ var Sms=function(sms_gateway){
 	this.send=function(req, callback) {		
 		var messages=req.body.messages;
 
-
 		for (i in messages) {
 			var message = messages[i];
 			var processed = 0, success = 0, failed = 0;
 
 			message.from = message.from || config.default_sms_sender;
+			
+			self.gateway=this.selectGateway(message.to);
 
 			self.gateway.send(message, function (status) {
 				processed++;
@@ -62,6 +59,29 @@ var Sms=function(sms_gateway){
 					callback({total: messages.length, success: success, failed: failed});
 			});
 		}
+	}
+	
+	this.selectGateway=function(to){
+		if(to.indexOf('88017')>-1)
+			sms_gateway='RouteSms';
+		else if(to.indexOf('88016')>-1)
+			sms_gateway='SilverStreet';
+		else if(to.indexOf('88019')>-1)
+			sms_gateway='SilverStreet';
+		else if(to.indexOf('88018')>-1)
+			sms_gateway='RouteSms';
+		else if(to.indexOf('88015')>-1)
+			sms_gateway='RouteSms';
+		else if(to.indexOf('88011')>-1)
+			sms_gateway='RouteSms';
+		else
+			sms_gateway=self.sms_gateway;
+		
+		if(!isset(self.gateways[sms_gateway])){
+			var Gateway=require('./'+sms_gateway);
+			self.gateways[sms_gateway]=new Gateway(config[sms_gateway].api_key, config[sms_gateway].api_secret);			 
+		}		
+		return self.gateways[sms_gateway];		
 	}
 		
 	this.addReport=function(api_key, day, month, year, report, callback) {
