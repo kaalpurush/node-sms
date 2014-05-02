@@ -5,7 +5,7 @@ var config = require('../config/smsconfig');
 var Sms=function(sms_gateway){
 	var self=this;
 	var connected=false;
-	var api_key='';
+	self.api_key='';
 	
 	self.gateways=[];
 	
@@ -34,14 +34,14 @@ var Sms=function(sms_gateway){
 	}
 
 	this.authenticate=function(cred, success, fail) {
-		connectDB(function(){
+		self.connectDB(function(){
 			var collection = self.db.collection('clients');
 			cred.api_origin=cred.api_origin.replace('http://','').replace('https://','').replace('www.','');
 			
 			collection.findOne({api_key: cred.api_key, api_secret: cred.api_secret, api_origin: cred.api_origin}, function (err, item) {
 				if (err) throw err;
 				if (item){
-					self.api_key=api_key;
+					self.api_key=cred.api_key;
 					success();
 				}
 				else{
@@ -63,7 +63,7 @@ var Sms=function(sms_gateway){
 			function(message, callback){
 				message.from = message.from || config.default_sms_sender;
 				
-				self.gateway=this.selectGateway(message.to);
+				self.gateway=self.selectGateway(message.to);
 
 				self.gateway.send(message, function (status) {
 					processed++;
@@ -81,7 +81,7 @@ var Sms=function(sms_gateway){
 				else{
 					var report={total: messages.length, success: success, failed: failed};
 					var date = new Date;
-					addReport(date.getDate(), date.getMonth() + 1, date.getFullYear(), report, function(){
+					self.addReport(date.getDate(), date.getMonth() + 1, date.getFullYear(), report, function(){
 						self.closeDB();
 					});
 					next(report);
@@ -130,7 +130,7 @@ var Sms=function(sms_gateway){
 		conditions.year = year;
 		//console.log(conditions);
 		collection.find(conditions).sort({year: -1, month: -1, day: -1}).toArray(function (err, results) {
-			closeDB();
+			self.closeDB();
 			if (err) throw err;			
 			next(results);
 		});
