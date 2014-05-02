@@ -17,26 +17,18 @@ exports.send = function (req, res) {
 	var sms=new Sms(gateway);
 
 	try{
-		sms.connectDB(function(){
-			sms.authenticate({api_key: api_key, api_secret: api_secret, api_origin: api_origin},
-				function () {
-					sms.send(req, function (report) {
-						console.log(report);
-						var date = new Date;
-						sms.addReport(api_key, date.getDate(), date.getMonth() + 1, date.getFullYear(), report, function(){
-							sms.closeDB();
-						});
-						//res.json(report);
-					});
-					res.json({total:req.body.messages.length});				
-				},
-				function () {
-					res.json({error: 'Auth Error!'});
-					sms.closeDB();
-				}
-			);
-		});
-	}catch(e){sms.closeDB();}
+		sms.authenticate({api_key: api_key, api_secret: api_secret, api_origin: api_origin},
+			function () {
+				sms.send(req, function (report) {
+					console.log(report);
+				});
+				res.json({total:req.body.messages.length});				
+			},
+			function () {
+				res.json({error: 'Auth Error!'});
+			}
+		);
+	}catch(e){sms.cleanUp();}
 }
 
 exports.report = function (req, res) {
@@ -52,20 +44,16 @@ exports.report = function (req, res) {
 	var gateway=req.params.sms_gateway;	
 	var sms=new Sms(gateway);
 	
-	//try{
-		sms.connectDB(function(){
-			sms.authenticate({api_key: api_key, api_secret: api_secret, api_origin: api_origin},
-				function () {
-					sms.showReport(api_key, day, month, year, function (report) {
-						res.json(report);
-						sms.closeDB();
-					});
-				},
-				function () {
-					res.json({error: 'Auth Error!'});
-					sms.closeDB();
-				}
-			);
-		});
-	//}catch(e){Sms.closeDB();}
+	try{
+		sms.authenticate({api_key: api_key, api_secret: api_secret, api_origin: api_origin},
+			function () {
+				sms.showReport(day, month, year, function (report) {
+					res.json(report);
+				});
+			},
+			function () {
+				res.json({error: 'Auth Error!'});
+			}
+		);
+	}catch(e){sms.cleanUp();}
 }
