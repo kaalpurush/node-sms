@@ -30,7 +30,7 @@ var Sms=function(sms_gateway){
 	}
 	
 	this.cleanUp=function(){
-		closeDB();
+		self.closeDB();
 	}
 
 	this.authenticate=function(cred, success, fail) {
@@ -41,11 +41,11 @@ var Sms=function(sms_gateway){
 			collection.findOne({api_key: cred.api_key, api_secret: cred.api_secret, api_origin: cred.api_origin}, function (err, item) {
 				if (err) throw err;
 				if (item){
-					api_key=api_key;
+					self.api_key=api_key;
 					success();
 				}
 				else{
-					closeDB();
+					self.closeDB();
 					fail();
 				}
 			});		
@@ -82,7 +82,7 @@ var Sms=function(sms_gateway){
 					var report={total: messages.length, success: success, failed: failed};
 					var date = new Date;
 					addReport(date.getDate(), date.getMonth() + 1, date.getFullYear(), report, function(){
-						sms.closeDB();
+						self.closeDB();
 					});
 					next(report);
 				}
@@ -114,7 +114,7 @@ var Sms=function(sms_gateway){
 	}
 		
 	this.addReport=function(day, month, year, report, next) {
-		self.db.collection('reports').update({api_key: api_key, day: day, month: month, year: year}, {$inc: report}, {upsert: true}, function (err, objects) {
+		self.db.collection('reports').update({api_key: self.api_key, day: day, month: month, year: year}, {$inc: report}, {upsert: true}, function (err, objects) {
 			if (err) throw err;
 			next();
 		}); 	
@@ -122,7 +122,7 @@ var Sms=function(sms_gateway){
 	
 	this.showReport=function(day, month, year, next) {
 		var collection = self.db.collection('reports');
-		var conditions = {api_key:api_key};
+		var conditions = {api_key:self.api_key};
 		if (day)
 			conditions.day = day;
 		if (month)
