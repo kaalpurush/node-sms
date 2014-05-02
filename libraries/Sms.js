@@ -50,40 +50,45 @@ var Sms=function(sms_gateway){
 		});
 	}
 	
-	this.send=function(req, next) {		
+	this.send=function(req, next) {
 		var messages=req.body.messages;
 		
 		var processed = 0, success = 0, failed = 0;
 		
-		async.eachLimit(messages, 10,		
-			function(message, callback){
-				message.from = message.from || config.default_sms_sender;
-				
-				self.gateway=self.selectGateway(message.to);
+		var report={total: messages.length};
+		var date = new Date;
+		
+		self.addReport(date.getDate(), date.getMonth() + 1, date.getFullYear(), report, function(){
+			async.eachLimit(messages, 10,
+				function(message, callback){
+					message.from = message.from || config.default_sms_sender;
+					
+					self.gateway=self.selectGateway(message.to);
 
-				self.gateway.send(message, function (status) {
-					processed++;
-					if (status == 0)
-						failed++;
-					else
-						success++;
-					callback();
-				});
-			},
-			function(err){
-				if(err){
-				
-				}
-				else{
-					var report={total: messages.length, success: success, failed: failed};
-					var date = new Date;
-					self.addReport(date.getDate(), date.getMonth() + 1, date.getFullYear(), report, function(){
-						self.closeDB();
+					self.gateway.send(message, function (status) {
+						processed++;
+						if (status == 0)
+							failed++;
+						else
+							success++;
+						callback();
 					});
-					next(report);
+				},
+				function(err){
+					if(err){
+					
+					}
+					else{
+						report={success: success, failed: failed};
+						self.addReport(date.getDate(), date.getMonth() + 1, date.getFullYear(), report, function(){
+							self.closeDB();
+						});
+						next(report);
+					}
 				}
-			}
-		);
+			);
+		
+		});
 	}
 	
 	this.selectGateway=function(to){
