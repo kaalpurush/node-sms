@@ -9,15 +9,15 @@ var Synergy=function(api_key,api_secret){
 			headers:	{'content-type' : 'multipart/form-data'},
 			url:		this.end_point,
 			form:		{ key: this.api_key, countrycode: 'BD', numbers: message.to, message: message.body }
-		}, function(error, response, body){
+		}, function(error, response, body
+			console.log(body);
             try{
                 var ret=JSON.parse(body);
             }catch(e){}
             if(typeof ret!='undefined' && ret.return=='true')
                 callback(1);
             else
-                callback(0);
-			console.log(body);
+                callback(0);			
 		});
 	}
 }

@@ -3,16 +3,14 @@ var async = require('async');
 var config = require('../config/smsconfig');
 
 var Sms=function(sms_gateway){
-	var self=this;
-	var connected=false;
-	self.api_key='';
-	
-	self.gateways=[];
-	
+	var self=this;	
+	self.connected=false;
+	self.api_key='';	
+	self.gateways=[];	
 	self.sms_gateway=sms_gateway||config.default_sms_gateway;
 	
 	this.connectDB=function(next){
-		if(connected)
+		if(self.connected)
 			next();
 		else
 			MongoClient.connect(config.Mongo.connection, function (err, db) {
@@ -24,7 +22,7 @@ var Sms=function(sms_gateway){
 	}
 	
 	this.closeDB=function(){
-		if(connected)
+		if(self.connected)
 			self.db.close();
 		connected=false;
 	}
@@ -50,8 +48,6 @@ var Sms=function(sms_gateway){
 				}
 			});		
 		});
-		
-
 	}
 	
 	this.send=function(req, next) {		
