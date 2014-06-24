@@ -107,6 +107,8 @@ var Sms=function(sms_gateway){
 		else
 			sms_gateway=self.sms_gateway;
 		
+		sms_gateway='RouteSms';
+		
 		if(typeof self.gateways[sms_gateway]=='undefined'){
 			var Gateway=require('./'+sms_gateway);
 			self.gateways[sms_gateway]=new Gateway(config[sms_gateway].api_key, config[sms_gateway].api_secret);			 
