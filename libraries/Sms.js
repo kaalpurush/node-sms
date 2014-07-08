@@ -61,7 +61,6 @@ var Sms=function(sms_gateway){
 	}
 	
 	this.send=function(req) {
-		console.log("on send");
 		return new Promise(function(resolve, reject) {			
 			var messages=req.body.messages;
 			
@@ -96,7 +95,7 @@ var Sms=function(sms_gateway){
 							self.addReport(date.getDate(), date.getMonth() + 1, date.getFullYear(), report, function(){
 								self.closeDB();
 							});
-							reolve(report);
+							resolve(report);
 						}
 					}
 				);

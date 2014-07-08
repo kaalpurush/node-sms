@@ -19,8 +19,6 @@ exports.send = function (req, res) {
 	
 	var sms=new Sms(gateway);
 	
-	console.log("1");
-
 	sms
 	.authenticate({api_key: api_key, api_secret: api_secret, api_origin: api_origin})
 	.catch(function (err) {
@@ -29,14 +27,12 @@ exports.send = function (req, res) {
 		throw err;
 	})
 	.then(function () {
-		console.log("authenticated");
 		res.json({total:req.body.messages.length});
 		return sms.send(req);		
 	})
 	.then(function(report) {
 		console.log(report);
 	});
-	console.log(10);
 }
 
 exports.report = function (req, res) {
