@@ -48,7 +48,6 @@ var Sms=function(sms_gateway){
 						resolve();
 					}
 					else{
-						self.closeDB();
 						reject(new Error("User Not Found"));
 					}
 				});		
@@ -70,6 +69,9 @@ var Sms=function(sms_gateway){
 			var date = new Date;			
 			
 			self.addReport(date.getDate(), date.getMonth() + 1, date.getFullYear(), report)
+			.catch(function(err){
+				reject(err);
+			})
 			.then(function(){
 				async.eachLimit(messages, 10,
 					function(message, callback){
@@ -92,7 +94,8 @@ var Sms=function(sms_gateway){
 						}
 						else{
 							report={success: success, failed: failed};
-							self.addReport(date.getDate(), date.getMonth() + 1, date.getFullYear(), report, function(){
+							self.addReport(date.getDate(), date.getMonth() + 1, date.getFullYear(), report)
+							.then(function(){
 								self.closeDB();
 							});
 							resolve(report);

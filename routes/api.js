@@ -30,6 +30,11 @@ exports.send = function (req, res) {
 		res.json({total:req.body.messages.length});
 		return sms.send(req);		
 	})
+	.catch(function (err) {
+		res.json({error: 'Report Error!'});
+		sms.cleanUp();
+		throw err;
+	})	
 	.then(function(report) {
 		console.log(report);
 	});
