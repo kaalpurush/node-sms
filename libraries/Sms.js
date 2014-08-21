@@ -37,7 +37,10 @@ var Sms=function(sms_gateway){
 	this.authenticate=function(cred) {
 		return new Promise(function(resolve, reject) {
 			self.connectDB()
-			.then(function(){				
+			.catch(function(err){
+				reject(err);
+			})
+			.then(function(){			
 				var collection = self.db.collection('clients');
 				cred.api_origin=cred.api_origin.replace('http://','').replace('https://','').replace('www.','');
 				
@@ -51,10 +54,8 @@ var Sms=function(sms_gateway){
 						reject(new Error("User Not Found"));
 					}
 				});		
-			})
-			.catch(function(err){
-				reject(err);
 			});
+
 			
 		});
 	}
@@ -90,6 +91,7 @@ var Sms=function(sms_gateway){
 					},
 					function(err){
 						if(err){
+							//No rejecting! Cause need to try sending next.
 							//reject(err);
 						}
 						else{
@@ -157,7 +159,6 @@ var Sms=function(sms_gateway){
 			});
 		});
 	}
-
 }
 
 module.exports = Sms;
